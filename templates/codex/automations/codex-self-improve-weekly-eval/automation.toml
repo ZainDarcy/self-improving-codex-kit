@@ -1,0 +1,11 @@
+version = 1
+id = "codex-self-improve-weekly-eval"
+kind = "cron"
+name = "Codex 自我进化：每周评测"
+prompt = "请运行或复盘 ~/.codex/self-improve/evals/ 下的小型自我进化回放案例，并在 ~/.codex/self-improve/reports/ 下写一份带日期的中文评测报告。报告要检查当前 ACTIVE 规则是否会改善过往失败案例。不要修改 ACTIVE.md、PROFILE.md、AGENTS.md、hooks、rules 或 skills。如果还没有 eval 案例，请只在报告中用中文提出 3 到 5 个具体候选案例，不要直接创建或修改高优先级配置。"
+status = "ACTIVE"
+rrule = "FREQ=WEEKLY;BYDAY=SU;BYHOUR=11;BYMINUTE=0;BYSECOND=0"
+model = "gpt-5.5"
+reasoning_effort = "high"
+execution_environment = "local"
+cwds = ["{AUTOMATION_CWD}"]

@@ -1,0 +1,11 @@
+version = 1
+id = "codex-self-improve-weekly-consolidation"
+kind = "cron"
+name = "Codex 自我进化：每周整理"
+prompt = "请读取 ~/.codex/self-improve/memories/CANDIDATES.md 以及已有的自我进化记忆文件，产出一份中文整理报告到 ~/.codex/self-improve/reports/。报告需要去重候选项，并提出对 ACTIVE.md、PROFILE.md、AGENTS.md、hooks、rules 或 skills 的精确修改建议，但不要实际应用这些修改。每个判断都用 promote、keep_candidate 或 discard 分类，并用中文说明证据。对于建议 promote 的项目，请在报告里附一个可复制到 ~/.codex/self-improve/promotions/pending/ 的 YAML 条目模板，但不要自行写入 pending。不要记录 secrets、token、凭据、账号信息或私人敏感信息。"
+status = "ACTIVE"
+rrule = "FREQ=WEEKLY;BYDAY=SU;BYHOUR=10;BYMINUTE=0;BYSECOND=0"
+model = "gpt-5.5"
+reasoning_effort = "high"
+execution_environment = "local"
+cwds = ["{AUTOMATION_CWD}"]

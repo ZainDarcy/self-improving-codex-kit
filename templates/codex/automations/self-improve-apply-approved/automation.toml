@@ -1,0 +1,11 @@
+version = 1
+id = "self-improve-apply-approved"
+kind = "cron"
+name = "self-improve-apply-approved 自我进化应用已批准提升"
+prompt = "请运行 ~/.codex/self-improve/bin/apply_approved.py。它只处理 ~/.codex/self-improve/promotions/pending/ 下的 YAML 文件，并且只支持 append_unique、replace_literal、delete_literal 三种确定性操作。执行后请读取 ~/.codex/self-improve/promotions/promotions.log.md 和最新报告，用中文总结应用了哪些提升、哪些被 blocked。不要直接编辑 ACTIVE.md、PROFILE.md、AGENTS.md、hooks、rules 或 skills；必须通过 executor。不要记录 secrets、token、凭据、账号信息或私人敏感信息。"
+status = "ACTIVE"
+rrule = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU;BYHOUR=2;BYMINUTE=30;BYSECOND=0"
+model = "gpt-5.5"
+reasoning_effort = "high"
+execution_environment = "local"
+cwds = ["{AUTOMATION_CWD}"]

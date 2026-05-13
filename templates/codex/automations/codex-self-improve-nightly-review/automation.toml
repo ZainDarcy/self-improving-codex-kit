@@ -1,0 +1,11 @@
+version = 1
+id = "codex-self-improve-nightly-review"
+kind = "cron"
+name = "Codex 自我进化：每日复盘"
+prompt = "请复盘最近的 Codex 会话和自我进化记忆文件。只允许把候选改进追加到 ~/.codex/self-improve/memories/CANDIDATES.md，并在 ~/.codex/self-improve/reports/ 下写一份带日期的中文报告。每个候选都必须用中文标注为 promote、keep_candidate 或 discard，并说明证据来源。不要修改 ACTIVE.md、PROFILE.md、AGENTS.md、hooks、rules 或 skills。不要记录 secrets、token、凭据、账号信息或私人敏感信息。"
+status = "ACTIVE"
+rrule = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU;BYHOUR=2;BYMINUTE=0;BYSECOND=0"
+model = "gpt-5.5"
+reasoning_effort = "medium"
+execution_environment = "local"
+cwds = ["{AUTOMATION_CWD}"]

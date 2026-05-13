@@ -1,0 +1,4 @@
+name: self-improving-codex
+display_name: Self-Improving Codex
+short_description: Maintain auditable Codex memories, hooks, rules, and evals
+default_prompt: Review Codex behavior and propose safe self-improvement candidates.
