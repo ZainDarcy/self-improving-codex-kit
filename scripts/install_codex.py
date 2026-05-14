@@ -8,6 +8,11 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - Python < 3.11 fallback.
+    tomllib = None
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_ROOT = REPO_ROOT / "templates" / "codex"
@@ -19,6 +24,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--automation-cwd", default=str(Path.cwd()))
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--repair-config", action="store_true", help="Back up an invalid config.toml and recreate a minimal one.")
     return parser.parse_args()
 
 
@@ -45,11 +51,38 @@ def backup(path: Path, codex_home: Path, dry_run: bool) -> Path | None:
 
 
 def render(text: str, codex_home: Path, automation_cwd: str, python: str) -> str:
+    codex_home_text = portable_path(str(codex_home))
+    automation_cwd_text = portable_path(automation_cwd)
+    python_text = portable_path(python)
     return (
-        text.replace("{CODEX_HOME}", str(codex_home))
-        .replace("{AUTOMATION_CWD}", automation_cwd)
-        .replace("{PYTHON}", python)
+        text.replace("{CODEX_HOME}", codex_home_text)
+        .replace("{AUTOMATION_CWD}", automation_cwd_text)
+        .replace("{PYTHON}", python_text)
     )
+
+
+def portable_path(value: str) -> str:
+    """Use slash paths so rendered JSON/TOML is valid on Windows and Unix."""
+    return str(Path(value).expanduser()).replace("\\", "/").replace('"', '\\"')
+
+
+def config_error(path: Path) -> str | None:
+    if tomllib is None or not path.exists():
+        return None
+    try:
+        tomllib.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return str(exc)
+    return None
+
+
+def write_minimal_config(path: Path, codex_home: Path, dry_run: bool) -> None:
+    backup(path, codex_home, dry_run)
+    text = "# Recreated by Self-Improving Codex Kit after backing up an invalid config.toml.\n\n[features]\nhooks = true\ncodex_hooks = true\nmemories = true\n"
+    log(dry_run, f"recreate minimal {path}")
+    if not dry_run:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
 
 
 def copy_template(src: Path, dest: Path, codex_home: Path, automation_cwd: str, python: str, dry_run: bool) -> None:
@@ -72,8 +105,19 @@ def copy_template(src: Path, dest: Path, codex_home: Path, automation_cwd: str, 
         dest.chmod(0o755)
 
 
-def update_config(codex_home: Path, dry_run: bool) -> None:
+def update_config(codex_home: Path, dry_run: bool, repair_config: bool) -> None:
     path = codex_home / "config.toml"
+    error = config_error(path)
+    if error:
+        if repair_config:
+            write_minimal_config(path, codex_home, dry_run)
+            return
+        raise SystemExit(
+            f"Existing config.toml is invalid: {error}\n"
+            f"Back it up and recreate a minimal config with:\n"
+            f"  {sys.executable} scripts/install_codex.py --repair-config\n"
+        )
+
     backup(path, codex_home, dry_run)
     text = path.read_text(encoding="utf-8") if path.exists() else ""
     keys = {"hooks": "true", "codex_hooks": "true", "memories": "true"}
@@ -126,6 +170,9 @@ def update_config(codex_home: Path, dry_run: bool) -> None:
     if not dry_run:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("\n".join(out) + "\n", encoding="utf-8")
+        error = config_error(path)
+        if error:
+            raise SystemExit(f"Updated config.toml is invalid: {error}")
 
 
 def main() -> int:
@@ -136,7 +183,7 @@ def main() -> int:
         return 1
 
     copy_template(TEMPLATE_ROOT, codex_home, codex_home, args.automation_cwd, args.python, args.dry_run)
-    update_config(codex_home, args.dry_run)
+    update_config(codex_home, args.dry_run, args.repair_config)
     log(args.dry_run, "install complete")
     return 0
 

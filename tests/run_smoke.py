@@ -7,10 +7,24 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import importlib.util
 from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - Python < 3.11 fallback.
+    tomllib = None
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_installer_module():
+    spec = importlib.util.spec_from_file_location("install_codex", ROOT / "scripts" / "install_codex.py")
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def run(cmd: list[str], *, input_text: str | None = None, env: dict[str, str] | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -94,6 +108,44 @@ confirmed_by: smoke test
         result = run([sys.executable, str(codex_home / "self-improve" / "bin" / "apply_approved.py")], check=False)
         assert result.returncode == 1
         assert (codex_home / "self-improve" / "promotions" / "blocked" / "forbidden.yaml").exists()
+
+        installer = load_installer_module()
+        rendered_hooks = installer.render(
+            (ROOT / "templates" / "codex" / "hooks.json").read_text(encoding="utf-8"),
+            Path(r"C:\Users\Lumos-之\.codex"),
+            r"C:\Users\Lumos-之\self-improving-codex-kit",
+            r"C:\Program Files\Python\python.exe",
+        )
+        json.loads(rendered_hooks)
+        assert "C:/Users/Lumos-之/.codex" in rendered_hooks
+        assert r"C:\Users" not in rendered_hooks
+
+        if tomllib is not None:
+            rendered_automation = installer.render(
+                (ROOT / "templates" / "codex" / "automations" / "self-improve-apply-approved" / "automation.toml").read_text(encoding="utf-8"),
+                Path(r"C:\Users\Lumos-之\.codex"),
+                r"C:\Users\Lumos-之\self-improving-codex-kit",
+                r"C:\Program Files\Python\python.exe",
+            )
+            parsed = tomllib.loads(rendered_automation)
+            assert parsed["cwds"] == ["C:/Users/Lumos-之/self-improving-codex-kit"]
+
+            broken_home = tmp / "broken-codex-home"
+            broken_home.mkdir()
+            (broken_home / "config.toml").write_text("[broken\n", encoding="utf-8")
+            failed = run(
+                [sys.executable, "scripts/install_codex.py", "--codex-home", str(broken_home)],
+                check=False,
+            )
+            assert failed.returncode != 0
+            repaired_home = tmp / "repaired-codex-home"
+            repaired_home.mkdir()
+            (repaired_home / "config.toml").write_text("[broken\n", encoding="utf-8")
+            run([sys.executable, "scripts/install_codex.py", "--codex-home", str(repaired_home), "--repair-config"])
+            repaired_config = (repaired_home / "config.toml").read_text(encoding="utf-8")
+            tomllib.loads(repaired_config)
+            assert "[features]" in repaired_config
+            assert list((repaired_home / "self-improve" / "backups").glob("**/config.toml"))
 
         print("smoke tests passed")
         return 0

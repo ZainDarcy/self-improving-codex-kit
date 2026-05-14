@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{PYTHON} {CODEX_HOME}/hooks/self_improve_hook.py"
+            "command": "\"{PYTHON}\" \"{CODEX_HOME}/hooks/self_improve_hook.py\""
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{PYTHON} {CODEX_HOME}/hooks/self_improve_hook.py"
+            "command": "\"{PYTHON}\" \"{CODEX_HOME}/hooks/self_improve_hook.py\""
           }
         ]
       }
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{PYTHON} {CODEX_HOME}/hooks/self_improve_hook.py"
+            "command": "\"{PYTHON}\" \"{CODEX_HOME}/hooks/self_improve_hook.py\""
           }
         ]
       }
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{PYTHON} {CODEX_HOME}/hooks/self_improve_hook.py"
+            "command": "\"{PYTHON}\" \"{CODEX_HOME}/hooks/self_improve_hook.py\""
           }
         ]
       }
@@ -47,7 +47,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{PYTHON} {CODEX_HOME}/hooks/self_improve_hook.py"
+            "command": "\"{PYTHON}\" \"{CODEX_HOME}/hooks/self_improve_hook.py\""
           }
         ]
       }

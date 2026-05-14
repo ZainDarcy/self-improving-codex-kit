@@ -8,6 +8,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - Python < 3.11 fallback.
+    tomllib = None
+
 
 REQUIRED = [
     "AGENTS.md",
@@ -68,6 +73,15 @@ def main() -> int:
             json.loads(hooks_json.read_text(encoding="utf-8"))
         except Exception as exc:
             failures.append(f"invalid hooks.json: {exc}")
+
+    if tomllib is not None:
+        for toml_path in [codex_home / "config.toml", *sorted((codex_home / "automations").glob("**/*.toml"))]:
+            if toml_path.exists():
+                try:
+                    tomllib.loads(toml_path.read_text(encoding="utf-8"))
+                except Exception as exc:
+                    rel = toml_path.relative_to(codex_home)
+                    failures.append(f"invalid TOML in {rel}: {exc}")
 
     rules = codex_home / "rules" / "default.rules"
     if rules.exists():

@@ -1,24 +1,31 @@
 # Self-Improving Codex Kit
 
-这是一个可迁移、可审计的 Codex 自我进化工具包。它不修改模型权重，而是给 Codex 一套受控闭环：
+这是一个可迁移、可审计的自我进化规范和 Codex 参考实现。它不修改模型权重，而是让 AI 通过外部脚手架形成受控闭环：
 
 ```text
 观察 -> 写候选 -> 用户批准 -> 确定性 executor 应用 -> 审计日志
 ```
 
-英文说明见：[README.md](README.md)
+主 README 已内置中英文面板：[README.md](README.md)
 
-## 会安装什么
+## 这是什么
 
-- 全局 `AGENTS.md` 工作说明
-- Codex hooks：提醒、拦截危险动作、结束前质量检查
-- 命令 rules：放行低风险只读命令，阻止破坏性命令
-- 记忆文件：用户画像、当前规则、经验、错误、能力需求、候选
-- Promotion YAML 工作流和确定性 executor
-- Codex skill：`self-improving-codex`
-- 定时自动化：每日复盘、每周整理、每周评测、应用已批准提升
+这首先是一套规范，其次才是 Codex 参考实现。
+
+- 通用规范：[docs/spec.zh-CN.md](docs/spec.zh-CN.md)
+- 其他 AI 适配指南：[docs/for-other-ai.zh-CN.md](docs/for-other-ai.zh-CN.md)
+- Codex 参考模板：`templates/codex/`
+- Codex 辅助脚本：`scripts/`
 
 ## 快速开始
+
+给任何 AI 使用时，先让它阅读规范，而不是盲目执行安装器：
+
+```text
+请阅读 docs/spec.zh-CN.md，并按照你自己的配置机制生成等价的自我进化模板。先输出计划和 dry-run，不要直接改全局配置。
+```
+
+只在 Codex 上使用参考实现时，再运行：
 
 ```bash
 git clone https://github.com/YOUR-USER/self-improving-codex-kit.git
@@ -28,7 +35,7 @@ python3 scripts/install_codex.py
 python3 scripts/doctor.py
 ```
 
-安装器会在覆盖文件前备份到 `~/.codex/self-improve/backups/`。
+安装器只是 Codex 的参考实现辅助工具。它会在覆盖文件前备份到 `~/.codex/self-improve/backups/`。
 
 ## 安全模型
 
@@ -58,13 +65,9 @@ confirmed_by: 用户明确批准本次提升。
 python3 ~/.codex/self-improve/bin/apply_approved.py
 ```
 
-## 上传发布
+## 迁移和修复
 
-见 [docs/upload.md](docs/upload.md) 和 [docs/upload.zh-CN.md](docs/upload.zh-CN.md)。
-
-## 其他 AI 工具
-
-Codex v1 支持完整自动化。Claude、Cursor、Gemini 等其他 AI 可以手动读取 [docs/for-other-ai.md](docs/for-other-ai.md) 和 [docs/for-other-ai.zh-CN.md](docs/for-other-ai.zh-CN.md) 中的通用规则。
+新电脑迁移、Windows 配置修复和安全导入见 [docs/migration.zh-CN.md](docs/migration.zh-CN.md)。
 
 ## 许可证
 

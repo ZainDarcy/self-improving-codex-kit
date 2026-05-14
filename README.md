@@ -13,17 +13,24 @@
 观察 -> 写候选 -> 用户批准 -> 确定性 executor 应用 -> 审计日志
 ```
 
-## 会安装什么
+## 这是什么
 
-- 全局 `AGENTS.md` 工作说明
-- Codex hooks：提醒、拦截危险动作、结束前质量检查
-- 命令 rules：放行低风险只读命令，阻止破坏性命令
-- 记忆文件：用户画像、当前规则、经验、错误、能力需求、候选
-- Promotion YAML 工作流和确定性 executor
-- Codex skill：`self-improving-codex`
-- 定时自动化：每日复盘、每周整理、每周评测、应用已批准提升
+这首先是一套规范，其次才是 Codex 参考实现。
+
+- 通用规范：[docs/spec.zh-CN.md](docs/spec.zh-CN.md)
+- 其他 AI 适配指南：[docs/for-other-ai.zh-CN.md](docs/for-other-ai.zh-CN.md)
+- Codex 参考模板：`templates/codex/`
+- Codex 辅助脚本：`scripts/`
 
 ## 快速开始
+
+给任何 AI 使用时，先让它阅读规范，而不是盲目执行安装器：
+
+```text
+请阅读 docs/spec.zh-CN.md，并按照你自己的配置机制生成等价的自我进化模板。先输出计划和 dry-run，不要直接改全局配置。
+```
+
+只在 Codex 上使用参考实现时，再运行：
 
 ```bash
 git clone https://github.com/YOUR-USER/self-improving-codex-kit.git
@@ -33,7 +40,7 @@ python3 scripts/install_codex.py
 python3 scripts/doctor.py
 ```
 
-安装器会在覆盖文件前备份到 `~/.codex/self-improve/backups/`。
+安装器只是 Codex 的参考实现辅助工具。它会在覆盖文件前备份到 `~/.codex/self-improve/backups/`。
 
 ## 安全模型
 
@@ -88,17 +95,24 @@ A portable, auditable self-improvement layer for Codex. It does not modify model
 observe -> write candidates -> user approves -> deterministic executor applies -> audit log
 ```
 
-## What It Installs
+## What This Is
 
-- Global `AGENTS.md` operating notes
-- Codex hooks for reminders and guardrails
-- Command rules for low-risk allows and destructive-command blocks
-- Memory files for profile, active rules, learnings, errors, feature requests, and candidates
-- Promotion YAML workflow with a deterministic executor
-- Codex skill: `self-improving-codex`
-- Recurring automations for review, consolidation, eval, and applying approved promotions
+This is a specification first and a Codex reference implementation second.
+
+- General spec: [docs/spec.md](docs/spec.md)
+- Other AI adaptation guide: [docs/for-other-ai.md](docs/for-other-ai.md)
+- Codex reference templates: `templates/codex/`
+- Codex helper scripts: `scripts/`
 
 ## Quick Start
+
+For any AI tool, ask it to read the spec instead of blindly running the installer:
+
+```text
+Read docs/spec.md and generate an equivalent self-improvement template using your own native configuration system. Present a plan and dry-run first; do not directly edit global config.
+```
+
+Only use the helper installer for the Codex reference implementation:
 
 ```bash
 git clone https://github.com/YOUR-USER/self-improving-codex-kit.git
@@ -108,7 +122,7 @@ python3 scripts/install_codex.py
 python3 scripts/doctor.py
 ```
 
-The installer backs up overwritten files under `~/.codex/self-improve/backups/`.
+The installer is only a helper for the Codex reference implementation. It backs up overwritten files under `~/.codex/self-improve/backups/`.
 
 ## Safety Model
 
